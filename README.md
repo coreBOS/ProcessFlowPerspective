@@ -15,7 +15,7 @@ This looks like this:
 
 ## Functionality
 
-When a record is saved we search the Process Flow module for records that control the module being saved, then we check if the controlled field is changing. If so, we evaluate the conditions on the Process Flow to see if the record is in the group of controlled records. If so, first, we see if there is a Dependency Graph related to the Flow. If there is we apply it's validation rules to decide if we will permit the change or not (see below). Next, we search the Process Step module for a step that represents the transition from the previous value of the field to the new value they are trying to save. if we find one, we apply the validations and then the positive or negative actions depending on the results. If no process step is found we proceed normally.
+When a record is saved we search the Process Flow module for records that control the module being saved, then we check if the controlled field is changing. If so, we evaluate the conditions on the Process Flow to see if the record is in the group of controlled records. If so, we search the Process Step module for a step that represents the transition from the previous value of the field to the new value they are trying to save. if we find one, we apply the validations and then the positive or negative actions depending on the results. If no process step is found we proceed normally (this shouldn't happen really, you should define a step for each valid transition).
 
 Every time the value of the field changes we save the transition information in an internal table which is scanned periodically with the Process Alert table settings in search of actions that must be launched in a timely manner.
 
@@ -42,7 +42,24 @@ Every few minutes the queue is scanned in search of records whose trigger time h
 
 This developer block will show a graphical representation of the values the record can transition to depending on the current value assigned to the record and will permit you to move to one of the next steps by clicking on it.
 
+## Workflow Context Variables
+
+Both the step and alert process set some context variables that are passed along the workflow execution chain so they can be used in the tasks. For example, when creating a Process Log record, we are normally in the context of the record launching the process but we need to get information about the Process Step or Alert that launched the workflow. Let's suppose we have a process that is controlling the status changes of a project task. When a task changes it's status a Process Step launches a workflow which launches a create record task to create a Process Log (we want to log the status change). The creation is launched from the Project Task and we have no idea of, nor any way to get information from, the Process Step that started everything. To permit you to access that information the Process Flow system loads some variables in the workflow context so you can retrieve those values and use them in workflow task with the `getFromContext` method.
+
+These variables are:
+
+- **ProcessRelatedFlow**: crmid of the process flow controlling the field value change
+- **ProcessRelatedStepOrAlert**: crmid of the step or alert launching the workflow
+- **ProcessPreviousStatus**: previous value of the field if we are being launched from a Step or empty if it is an Alert launching the workflow task
+- **ProcessNextStatus**: next status that has been saved on the record or that would have been saved if the Step validations did not pass (negative workflows) or the Alert status
+
+![Create Entity with Context](CreateEntityWithContext.png?raw=true "Create Entity with Context")
+
+Additionally the `deleteFromProcessAlertQueue` will look in the context for a variable named: `ProcessAlertValueToDelete`. If this variable (which can be loaded through the context map in the Alert) has a valid CRMID of an Alert that Alert will be eliminated from the queue.
+
+
 ## Future Enhancements
 
+- send step validation errors to top level UI
 - Company workdays SLA considerations
 - Create a set of records and workflows that implement some typical use cases like an **Approval Process** or **Force Potential Steps with Quote Versioning**.
