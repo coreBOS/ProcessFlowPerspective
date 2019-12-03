@@ -57,6 +57,9 @@ These variables are:
 
 Additionally the `deleteFromProcessAlertQueue` will look in the context for a variable named: `ProcessAlertValueToDelete`. If this variable (which can be loaded through the context map in the Alert) has a valid CRMID of an Alert that Alert will be eliminated from the queue.
 
+## Installing
+
+Either use the `composer.json` file and composer or copy the changeset (processflow.xml) to the coreBOS updater cbupdates directory and use coreBOS Updater.
 
 ## Future Enhancements
 
