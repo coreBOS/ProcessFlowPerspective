@@ -19,6 +19,9 @@ When a record is saved we search the Process Flow module for records that contro
 
 Every time the value of the field changes we save the transition information in an internal table which is scanned periodically with the Process Alert table settings in search of actions that must be launched in a timely manner.
 
+[Video Presentation](https://youtu.be/QOKuNtXGls4)
+
+
 ## Dependency Graph Maps
 
 ![Dependency Graph](DependencyGraph.png?raw=true "Dependency Graph")
@@ -26,6 +29,9 @@ Every time the value of the field changes we save the transition information in 
 The Dependency Graph is the exact setting of the process you need to enforce. It will permit you to define the validations and actions to be taken when going from one value to the next (Process Step) and also the alerts and actions that need to be taken at a higher level of the process, like an overall restriction between two states.
 
 This is a graphical representation of the Process Steps and Process Alerts records.
+
+This is not used in the project, it is just for the implementor to get a view of the layout they have constructed.
+
 
 ## Alerting Procedure
 
@@ -66,3 +72,4 @@ Either use the `composer.json` file and composer or copy the changeset (processf
 - send step validation errors to top level UI
 - Company workdays SLA considerations
 - Create a set of records and workflows that implement some typical use cases like an **Approval Process** or **Force Potential Steps with Quote Versioning**.
+- implement the Dependency Graph visual representation
