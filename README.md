@@ -17,6 +17,8 @@ This looks like this:
 
 When a record is saved we search the Process Flow module for records that control the module being saved, then we check if the controlled field is changing. If so, we evaluate the conditions on the Process Flow to see if the record is in the group of controlled records. If so, we search the Process Step module for a step that represents the transition from the previous value of the field to the new value they are trying to save. if we find one, we apply the validations and then the positive or negative actions depending on the results. If no process step is found we proceed normally (this shouldn't happen really, you should define a step for each valid transition).
 
+A step can be marked as inactive but each step also has an "Is Active Validation" map. If this field contains a validation map which evaluates to "false" then the  step will not be applied. For the validation to be evaluated the step must be marked as active.
+
 Every time the value of the field changes we save the transition information in an internal table which is scanned periodically with the Process Alert table settings in search of actions that must be launched in a timely manner.
 
 [Video Presentation](https://youtu.be/QOKuNtXGls4)
