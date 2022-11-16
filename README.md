@@ -81,6 +81,25 @@ These variables are:
 
 Additionally, the `deleteFromProcessAlertQueue` will look in the context for a variable named: `ProcessAlertValueToDelete`. If this variable (which can be loaded through the context map in the Alert) has a valid CRMID of an Alert that Alert will be eliminated from the queue.
 
+## Additional Information Popup Form
+
+In some process flows it is necessary to ask for a set of additional information when we transition from one step to the next. In this case, the perspective counts on two other modules. [Process Step Information](https://github.com/coreBOS/cbProcessInfo) which defines the details of where and how the additional information is to be presented and saved, and another module where the information will be saved. This second module can be any module as long as it has a reference field to the main module of the BPM process, and it has [the necessary javascript function](https://github.com/coreBOS/ModuleBPMInfo/blob/main/modules/ModuleBPMInfo/ModuleBPMInfo.js#L10-L21). You can use the [Module BPM Information module](https://github.com/coreBOS/ModuleBPMInfo) as a template or "as is".
+
+When we install the Process Step Information module it will add a reference field in the Process Step module which will permit you to select a record in the Process Step Information module. If a record is selected in the Step a popup will be shown when trying to transition from that Step. The Process Step Information record contains four fields:
+
+- where the fields will be saved (see the [Module BPM Information module](https://github.com/coreBOS/ModuleBPMInfo) for a template)
+- what fields will be presented in the popup screen: a master detail business map
+- what field dependencies will be present: field dependency map
+- what validation must be done in that popup form: validation map
+
+This means that in the popup form that will be presented we will be able to define which fields we want to show, permitting us to use the same module for different steps presenting different fields to be edited. We will be able to define which field dependencies and validations we want to apply in the popup.
+
+For this to work, we must include in the module where the BPM process is being applied a javascript function to finish the save when the form is finished. This can be included using a HEADERSCRIPT business action.
+
+`modules/ModuleBPMInfo/ModuleBPMInfo.js`  (for example)
+
+In the case where we need to present a different set of fields depending on some conditions, we can also select a condition expression business map in the Step that must return the ID of the Process Step Information record you want to apply.
+
 ## Installing
 
 Either use the `composer.json` file and composer or copy the changeset (processflow.xml) to the coreBOS updater cbupdates directory, copy all the modules into their place and use coreBOS Updater.
@@ -90,3 +109,6 @@ Either use the `composer.json` file and composer or copy the changeset (processf
 - send step validation errors to top-level UI
 - Company workdays SLA considerations
 - Create a set of records and workflows that implement some typical use cases like an **Approval Process** or **Force Potential Steps with Quote Versioning**.
+- support editing of the additional information form
+- time to fill in a popup form. automatically save the time spent to fill in the popup form
+- add more statistical information to the popup forms
